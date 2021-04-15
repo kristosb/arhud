@@ -15,7 +15,7 @@ export default function scene(scene) {
     //scene.add(lightIn);
     //scene.add(lightOut);
     
-    const rad = 80;
+    //const rad = 80;
 
     function update(time) {
         //const x = rad * Math.sin(time*0.2)
