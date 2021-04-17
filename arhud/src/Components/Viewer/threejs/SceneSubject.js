@@ -2,7 +2,7 @@ import * as THREE from 'three'
 
 export default function scene(scene) {    
     const group = new THREE.Group();
-    const boxGeometry = new THREE.BoxGeometry(0.1, 0.1, 0.1);
+    const boxGeometry = new THREE.BoxGeometry(0.4, 0.4, 0.4);
     const boxGeometrySmall = new THREE.BoxGeometry(0.00002, 0.00002, 0.00002);
     function makeInstance(geometry, color, x,y,z) {
         const material = new THREE.MeshPhongMaterial({color});
@@ -18,7 +18,7 @@ export default function scene(scene) {
         return cube;
       }
     const cubes = [
-    makeInstance(boxGeometry, 0x44aa88,  0, 0, -0.15),
+    //makeInstance(boxGeometry, 0x44aa88,  0, 0, -0.5),
     makeInstance(boxGeometrySmall, 0xff0000,  -0.032, 0, -0.0002),
     makeInstance(boxGeometrySmall, 0x00ff00,  0.032, 0, -0.0002)
       ];

@@ -32,7 +32,7 @@ export default function canvas(canvas)  {
     var offset = 0;
     scene.add(camera);
     console.log(screenDimensions);
-    var hud = new Hud(scene,canvas);
+    new Hud(scene,canvas);
     if (preserveSize){
         // remember these initial values
         var tanFOV = Math.tan( ( ( Math.PI / 180 ) * camera.fov / 2 ) );
