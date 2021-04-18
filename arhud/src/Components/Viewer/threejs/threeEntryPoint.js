@@ -4,12 +4,16 @@ export default container => {
     
     const canvas = createCanvas(document, container);
     const sceneManager = new SceneManager(canvas);
-
+    
+    
     let canvasHalfWidth;
     let canvasHalfHeight;
 
     bindEventListeners();
-    render();
+    sceneManager.animate();
+    
+    //var renderer = sceneManager.getRenderer();
+    //render();
     
     function createCanvas(document, container) {
         const canvas = document.createElement("canvas");    
@@ -30,9 +34,6 @@ export default container => {
         canvas.width  = canvas.offsetWidth;
         canvas.height = canvas.offsetHeight;
 
-
-
-
         canvasHalfWidth = Math.round(canvas.offsetWidth/2);
         canvasHalfHeight = Math.round(canvas.offsetHeight/2);
 
@@ -44,10 +45,16 @@ export default container => {
         sceneManager.onMouseMove(screenX-canvasHalfWidth, screenY-canvasHalfHeight);
     }
 
-    function render(time) {
+    //function render(time) {
         
-        sceneManager.update();
+     //   sceneManager.update();
         //hudManager.update();
-        requestAnimationFrame(render);
-    }
+    //    requestAnimationFrame(render);
+    //}/
+    //renderer.setAnimationLoop( function () {
+
+        //renderer.render( scene, camera );
+     //   sceneManager.update();
+    //} );
+
 }

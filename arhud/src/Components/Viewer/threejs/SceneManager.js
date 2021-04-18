@@ -2,8 +2,8 @@ import * as THREE from 'three';
 import SceneSubject from './SceneSubject';
 import GeneralLights from './GeneralLights';
 import { StereoEffect } from './StereoEffect.js';
+//import Hud from './Hud';
 import Hud from './Hud';
-
 export default function canvas(canvas)  {
     var preserveSize = true;
 
@@ -24,15 +24,17 @@ export default function canvas(canvas)  {
     const renderer = buildRender(screenDimensions);
     const camera = buildCamera(screenDimensions);
     const sceneSubjects = createSceneSubjects(scene);
-
+    var hud = new Hud(scene,canvas);
     var effect = new StereoEffect( renderer );
     effect.setSize( screenDimensions.width, screenDimensions.height );
     effect.setEyeSeparation(0.064);
     effect.setOffset(0);
     var offset = 0;
+    
     scene.add(camera);
-    console.log(screenDimensions);
-    new Hud(scene,canvas);
+    //console.log(screenDimensions);
+    
+
     if (preserveSize){
         // remember these initial values
         var tanFOV = Math.tan( ( ( Math.PI / 180 ) * camera.fov / 2 ) );
@@ -87,15 +89,21 @@ export default function canvas(canvas)  {
 
     function update() {
         const elapsedTime = clock.getElapsedTime();
-
+        
         for(let i=0; i<sceneSubjects.length; i++)
             sceneSubjects[i].update(elapsedTime);
         //renderer.render(scene, camera);
+        //console.log(canvas);
+        
+        hud.update(elapsedTime);
         render();
+        
+        
     }
     function render() {
         //updateCameraPositionRelativeToMouse()
         effect.render( scene, camera );
+        
     }
     function onKeyPress(ev) {
         let keycode = ev.which;
@@ -108,7 +116,8 @@ export default function canvas(canvas)  {
             if(keycode == 50) {offset = offset -0.1;effect.setOffset(offset);}
             //if(keycode == 51) {camera.rotateY(Math.PI/360);}
             //if(keycode == 52) {camera.rotateY(-Math.PI/360);}
-            console.log( offset);
+            //console.log( offset);
+            //if(keycode == 51) hud.draw();
         }
       }
 
@@ -137,15 +146,33 @@ export default function canvas(canvas)  {
         //camera.lookAt( scene.position );
         renderer.setSize(width, height);   
     }
+    function getRenderer(){
+        return renderer;
+    }
+
+    function animate(){
+        renderer.setAnimationLoop( function () {
+            
+            //renderer.render( scene, camera );
+            update();
+            
+        } );
+
+    }
 
     function onMouseMove(x, y) {
         mousePosition.x = x;
         mousePosition.y = y;
     }
-
+    function getScene(){
+        return scene;
+    }
     return {
         update,
         onWindowResize,
-        onMouseMove
+        onMouseMove,
+        getRenderer,
+        animate,
+        getScene
     }
 }
