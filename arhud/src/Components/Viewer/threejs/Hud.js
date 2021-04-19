@@ -34,27 +34,7 @@ export default function hud(scene,canvas){
     hudElements.crosshair.lineWidth = 2;
     //hudElements.border.draw();
     Object.values(hudElements).forEach(val => {val.draw()});
-    //hudBitmap.clearRect(0,0,300,300);
-    //HUD.animation(hudAnimate);
-    //animator.
-    /*var ball = {
-        x: 100,
-        y: 100,
-        vx: 5,
-        vy: 2,
-        radius: 25,
-        color: 'blue',
-        draw: function() {
-            hudBitmap.beginPath();
-            hudBitmap.arc(this.x, this.y, this.radius, 0, Math.PI * 2, true);
-            hudBitmap.closePath();
-            hudBitmap.fillStyle = this.color;
-            hudBitmap.fill();
-        }
-      };*/
-      
-
-      //ball.draw();  
+ 
 
     var hudTexture = new THREE.Texture(hudCanvas);
     //hudTexture.name = "hudCanvas";
@@ -66,20 +46,19 @@ export default function hud(scene,canvas){
     plane.name = "hudPlane";
     plane.position.set(0,0,-0.15);
     scene.add( plane );
-    //console.log(hudCanvas);
-    //console.log(hudTexture.id);
-    //console.log(hudTexture.name);
-    //console.log(hudTexture.image);
-    
-    //console.log(scene.getObjectByName("hudPlane").material.map.image);
-    //hudElements.crosshair.draw();
     var vx = 5;
     var vy = 2;
-    var count = 0;
+    
+    function leading_zeros(dt) 
+    { 
+        return (dt < 10 ? '0' : '') + dt;
+    }
+    
     function draw() {
-        hudBitmap.clearRect(0,0,300,300);
-        count++;
-        hudElements.info.text = count.toString();
+        hudBitmap.clearRect(0,0,screenDimensions.width/2,screenDimensions.height);
+        //count++;
+        var d = new Date();   
+        hudElements.info.text = `${leading_zeros(d.getHours())}:${leading_zeros(d.getMinutes())}:${leading_zeros(d.getSeconds())}`;
         
         //hudTexture.needsUpdate = true;
         //hudBitmap.clearRect(0,0, 300, 300);
