@@ -18,7 +18,7 @@ export default function scene(scene) {
         return cube;
       }
     const cubes = [
-    makeInstance(boxGeometry, 0x44aa88,  0, 0, -0.5),
+    //makeInstance(boxGeometry, 0x44aa88,  0, 0, -0.5),
     makeInstance(boxGeometrySmall, 0xff0000,  -0.032, 0, -0.0002),
     makeInstance(boxGeometrySmall, 0x00ff00,  0.032, 0, -0.0002)
       ];
@@ -44,8 +44,8 @@ export default function scene(scene) {
         const angle = time*speed;
 
         //group.rotation.y = angle;
-        cubes[0].rotation.x = angle;
-        cubes[0].rotation.y = angle;
+        //cubes[0].rotation.x = angle;
+        //cubes[0].rotation.y = angle;
         //subjectMaterial.alphaMap.offset.y = 0.55 + time * textureOffsetSpeed;
 
         //subjectWireframe.material.color.setHSL( Math.sin(angle*2), 0.5, 0.5 );

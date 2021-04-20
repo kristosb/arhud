@@ -26,9 +26,10 @@ export default function hud(scene,canvas){
     hudBitmap.strokeStyle = style;
     hudBitmap.globalAlpha = 0.75;
     var hudElements = {
-        info: new HUD.hudSimpleText(hudBitmap, 10, 20),
+        info: new HUD.hudSimpleText(hudBitmap, 10, 20,16),
         border: new HUD.hudBorder(hudBitmap,hudCanvas.width,hudCanvas.height),
-        crosshair: new HUD.crosshair(hudBitmap,hudCanvas.width,hudCanvas.height)
+        crosshair: new HUD.crosshair(hudBitmap,hudCanvas.width,hudCanvas.height),
+        horizon: new HUD.horizon(hudBitmap,hudCanvas.width,hudCanvas.height)
     };
     hudElements.border.lineWidth = 5;
     hudElements.crosshair.lineWidth = 2;
@@ -48,7 +49,8 @@ export default function hud(scene,canvas){
     scene.add( plane );
     var vx = 5;
     var vy = 2;
-    
+    var angle = 0;
+    var yaw =0;
     function leading_zeros(dt) 
     { 
         return (dt < 10 ? '0' : '') + dt;
@@ -58,7 +60,7 @@ export default function hud(scene,canvas){
         hudBitmap.clearRect(0,0,screenDimensions.width/2,screenDimensions.height);
         //count++;
         var d = new Date();   
-        hudElements.info.text = `${leading_zeros(d.getHours())}:${leading_zeros(d.getMinutes())}:${leading_zeros(d.getSeconds())}`;
+        hudElements.info.text = `TIME:${leading_zeros(d.getHours())}:${leading_zeros(d.getMinutes())}:${leading_zeros(d.getSeconds())}`;
         
         //hudTexture.needsUpdate = true;
         //hudBitmap.clearRect(0,0, 300, 300);
@@ -70,10 +72,15 @@ export default function hud(scene,canvas){
         if (hudElements.crosshair.x + vx > screenDimensions.width/2 || hudElements.crosshair.x+ vx < 0) {
             vx = -vx;
         }
-        //hudElements.info.x= hudElements.crosshair.x-30;
-        //hudElements.info.y= hudElements.crosshair.y-30;
+
         hudElements.info.draw();
         hudElements.crosshair.draw();
+        if (angle>2.9)yaw = -0.02;
+        if (angle<0.1)yaw = 0.02;
+        angle += yaw;
+
+        hudElements.horizon.tilt = Math.sin(Math.PI*angle/2)*90;
+        hudElements.horizon.draw();
         hudTexture.needsUpdate = true;
         //console.log(screenDimensions.width);
         

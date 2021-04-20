@@ -32,29 +32,19 @@
 
      }
  }
- /*set x(xx){
-    this.x = xx;//Math.floor(xx) + 0.5;
-}
-set y(yy){
-    this.y = Math.floor(yy) + 0.5;
-}
-get x(){
-    return this.x;
-}
-get y(){
-    return this.y;
-}*/
+
 
 export class hudSimpleText extends hudControl{
-    constructor(bm, x, y) {
+    constructor(bm, x, y, fontSize) {
         super(bm,x,y);
         this.txt = "hello..."
+        this.fontSize = fontSize;
     }
     set text(txt){
         this.txt = txt;
     }
     draw(){
-        this.bm.font = "20px monaco";
+        this.bm.font = `${this.fontSize}px monaco`;
         this.bm.textAlign = 'start';
         this.bm.fillText(this.txt, this.x, this.y);
     }
@@ -96,6 +86,44 @@ export class crosshair extends hudControl{
         this.bm.closePath();
         this.bm.stroke();
         super.resetGlobalLineWidth();
+    }
+  }
+
+  export class horizon extends hudControl{
+    constructor(bm, width, height) {
+        super(bm,width / 2,height / 2);
+        this.width = width;
+        this.height = height;
+        this.tilt = 0;
+    }
+    set angle(angle){
+        this.tilt = angle;
+    }
+    draw(){
+        // remove aliasing
+        this.x = Math.floor(this.x) + 0.5;
+        this.y = Math.floor(this.y) + 0.5;
+        this.bm.save();
+        //this.bm.clearRect(0,0,this.width,this.height);
+        this.bm.translate(this.width/2, this.height/2)
+        this.bm.rotate((Math.PI / 180) * this.tilt); // rotate
+        this.bm.translate(-this.width/2, -this.height/2)
+        super.changeLocalLineWidth();
+        this.bm.strokeWidth = 1;
+        this.bm.beginPath();
+        this.bm.moveTo(this.x-50, this.y);
+        this.bm.lineTo(this.x-20, this.y);
+        this.bm.moveTo(this.x-20, this.y);
+        this.bm.lineTo(this.x, this.y -20 );
+        this.bm.moveTo(this.x, this.y -20 );
+        this.bm.lineTo(this.x+20, this.y);
+        this.bm.moveTo(this.x+20,  this.y);
+        this.bm.lineTo(this.x+50,  this.y);
+        this.bm.closePath();
+        this.bm.stroke();
+        super.resetGlobalLineWidth();
+        
+        this.bm.restore();
     }
   }
 
