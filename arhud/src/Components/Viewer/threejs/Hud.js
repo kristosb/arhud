@@ -10,7 +10,7 @@ export default function hud(scene,canvas){
     var count = 0;
     var elapsed, now;
     var then= 0;
-    var interval=0.1;
+    var interval=0.05;
     console.log('win'+window.innerHeight);
     var style = `rgba(
         ${0xa3},
@@ -29,7 +29,8 @@ export default function hud(scene,canvas){
         info: new HUD.hudSimpleText(hudBitmap, 10, 20,16),
         border: new HUD.hudBorder(hudBitmap,hudCanvas.width,hudCanvas.height),
         crosshair: new HUD.crosshair(hudBitmap,hudCanvas.width,hudCanvas.height),
-        horizon: new HUD.horizon(hudBitmap,hudCanvas.width,hudCanvas.height)
+        horizon: new HUD.horizon(hudBitmap,hudCanvas.width,hudCanvas.height),
+        compass: new HUD.compass(hudBitmap,hudCanvas.width,hudCanvas.height)
     };
     hudElements.border.lineWidth = 5;
     hudElements.crosshair.lineWidth = 2;
@@ -51,6 +52,9 @@ export default function hud(scene,canvas){
     var vy = 2;
     var angle = 0;
     var yaw =0;
+    var magnet = 10;
+    const minc = 0.1;
+    var magnetInc = minc;
     function leading_zeros(dt) 
     { 
         return (dt < 10 ? '0' : '') + dt;
@@ -58,7 +62,7 @@ export default function hud(scene,canvas){
     
     function draw() {
         hudBitmap.clearRect(0,0,screenDimensions.width/2,screenDimensions.height);
-        //count++;
+        
         var d = new Date();   
         hudElements.info.text = `TIME:${leading_zeros(d.getHours())}:${leading_zeros(d.getMinutes())}:${leading_zeros(d.getSeconds())}`;
         
@@ -75,119 +79,21 @@ export default function hud(scene,canvas){
 
         hudElements.info.draw();
         hudElements.crosshair.draw();
+
+        if (magnet>25)magnetInc = -minc;
+        if (magnet< 5)magnetInc = minc;
+        magnet += magnetInc;
+        hudElements.compass.angle = magnet;
+        hudElements.compass.draw();
+
         if (angle>2.9)yaw = -0.02;
         if (angle<0.1)yaw = 0.02;
         angle += yaw;
-
         hudElements.horizon.tilt = Math.sin(Math.PI*angle/2)*90;
         hudElements.horizon.draw();
+
         hudTexture.needsUpdate = true;
-        //console.log(screenDimensions.width);
-        
-        //hudTexture.needsUpdate = true;
-        /*ball.draw();
-        ball.x += ball.vx;
-        ball.y += ball.vy;
-        if (ball.y + ball.vy > screenDimensions.height || ball.y + ball.vy < 0) {
-            ball.vy = -ball.vy;
-          }
-        if (ball.x + ball.vx > screenDimensions.width || ball.x + ball.vx < 0) {
-            ball.vx = -ball.vx;
-        }*/
-        //console.log(hudCanvas);
-        //var a =scene.getObjectByName("hudPlane").material.map;
-        //console.log(a);
-        //console.log(scene.getObjectByName("hudPlane").material.map.minimaps);
-        //console.log(scene.getObjectByName("hudPlane").material.map.image);
       }
-    //draw();
-    //draw();
-    //draw();
-    //draw();
-    //setInterval(draw, 5000);
-
-    
-      //canvas.addEventListener('mouseover', function(e) {
-        
-      //});
-      
-      //canvas.addEventListener('mouseout', function(e) {
-     //   window.cancelAnimationFrame(raf);
-      //});
-      
-      
-      //window.requestAnimationFrame(draw);
-    //hudAnimate();
-    /*function hudAnimate(){
-        hudBitmap.clearRect(0,0,300,300);
-        //hudCanvas.clearRect(0,0, hudCanvas.width, hudCanvas.height);
-        hudElements.info.text = count.toString();
-        Object.values(hudElements).forEach(val => {val.draw()});
-        count= count +1;
-        //console.log("anim");
-        window.requestAnimationFrame(hudAnimate);
-    }*/
-    //window.requestAnimationFrame(hudAnimate);
-    //hudAnimate();
-///////////////////////
-/*var raf;
-var stop = false;
-var frameCount = 0;
-//this.$results = $("#results");
-var fps = 5; 
-var fpsInterval=1000/this.fps;
-var startTime = 0;
-var now = Date.now();
-var then = Date.now();
-var elapsed = 0;
-
-//startAnimating(1);
-//}
-//function startAnimating(fps) {
-    fps = 1;
-    fpsInterval = 1000 / fps;
-    then = Date.now();
-    startTime = then;
-    console.log(startTime);
-    
-//}
-function  animate( ){
-
-    // calc elapsed time since last loop
-
-    now = Date.now();
-    elapsed = now - then;
-
-    // if enough time has elapsed, draw the next frame
-    //console.log("noanim");
-    if ( elapsed > fpsInterval) {
-
-        // Get ready for next frame by setting then=now, but...
-        // Also, adjust for fpsInterval not being multiple of 16.67
-        then = now - (elapsed % fpsInterval);
-
-        // draw stuff here
-
-        
-        // TESTING...Report #seconds since start and achieved fps.
-        //var sinceStart = this.now - this.startTime;
-        //var currentFps = Math.round(1000 / (sinceStart / ++this.frameCount) * 100) / 100;
-        //$results.text("Elapsed time= " + Math.round(sinceStart / 1000 * 100) / 100 + " secs @ " + currentFps + " fps.");
-        //hudAnimate.call(scope);
-        hudBitmap.clearRect(0,0,300,300);
-        //hudCanvas.clearRect(0,0, hudCanvas.width, hudCanvas.height);
-        hudElements.info.text = count.toString();
-        Object.values(hudElements).forEach(val => {val.draw()});
-        count= count +1;
-        console.log("anim"+count);
-        
-    }
-    ////
-}
-//animate();
-/////////////
-
-*/
 
 
     function flipHoriz(drawing){
