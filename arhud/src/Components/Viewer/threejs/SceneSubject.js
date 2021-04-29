@@ -18,9 +18,9 @@ export default function scene(scene) {
         return cube;
       }
     const cubes = [
-    //makeInstance(boxGeometry, 0x44aa88,  0, 0, -0.5),
-    makeInstance(boxGeometrySmall, 0xff0000,  -0.032, 0, -0.0002),
-    makeInstance(boxGeometrySmall, 0x00ff00,  0.032, 0, -0.0002)
+    makeInstance(boxGeometry, 0x44aa88,  0, 0, -0.5),
+    //makeInstance(boxGeometrySmall, 0xff0000,  -0.032, 0, -0.0002),
+    //makeInstance(boxGeometrySmall, 0x00ff00,  0.032, 0, -0.0002)
       ];
     //group.add(boxGeometry);
     //scene.add(group);

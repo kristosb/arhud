@@ -127,70 +127,164 @@ export class crosshair extends hudControl{
     }
   }
 
-  function range(start, end) {
-    return Array(end - start + 1).fill().map((_, idx) => start + idx)
+  function range(start, end, inc) {
+    //console.log(start,end);
+    return Array(end/inc - (start/inc) + 1).fill().map((_, idx) => start+ idx*inc);
   }
-
+  function limit(x){
+    if(x<0) x = x+ 360;
+    if(x>359) x = x -360;
+    return x;
+  }
+  function rangeClip360(rangeArray){
+    return rangeArray.map(x=>limit(x));
+  }
   export class compass extends hudControl{
     constructor(bm, width, height) {
-        super(bm,width / 6,height / 6);
+        super(bm,width / 4,height / 7);
         this.width = width;
         this.height = height;
         this.tilt = 0;
         this.tickHeight = 15;
-        this.tickSpace = 30;
-        this.scaleVals = range(0,5);
+        this.tickSpace = 40;
+        this.scale = 10;
+        //this.scaleVals = range(10/this.scale,50/this.scale,this.scale);
+        //console.log(this.scaleVals);
         this.x = Math.floor(this.x) + 0.5;
         this.y = Math.floor(this.y) + 0.5;
-        this.yOffset = 0;
+        this._range = 4;
+        
     }
     set angle(angle){
         this.tilt = angle;
     }
+    set range(range){
+        this._range = range;
+    }
+    set rangeScale(rangeScale){
+        this.scale = rangeScale;
+    }
     draw(){
-        // remove aliasing
-        var tiltFloor =Math.floor(this.tilt);
-        var tiltRemd = Math.floor(this.tilt * 10) % 10;
-        var tiltRemdHalf = Math.floor((this.tilt+0.5) * 10) % 10;
-        this.scaleVals = range(tiltFloor-4,tiltFloor+4);
+        var tiltFloor = Math.floor(this.tilt);
+        var tiltRemd = Math.floor(this.tilt * 10/this.scale) % 10;
+        var tiltRemdHalf = Math.floor((this.tilt/this.scale+0.5) * 10) % 10;
+        this.scaleVals = range(
+            Math.floor(this.tilt/this.scale)*this.scale-Math.floor(this.scale*this._range/2),
+            Math.floor(this.tilt/this.scale)*this.scale+ Math.floor(this.scale*this._range/2),
+            this.scale);
+        this.scaleVals = rangeClip360(this.scaleVals);
         this.tilt = tiltFloor + tiltRemd/10;
-        //this.scaleVals = range(this.tilt-4,this.tilt+4);
-        //this.bm.save();
+
         super.changeLocalLineWidth();
         this.bm.beginPath();
-
-        //this.bm.moveTo(this.x, this.y);
-        //this.bm.lineTo(this.x, this.y-this.tickHeight);
         
         var space = this.x-tiltRemd*this.tickSpace/10;
         var spaceHalf = this.x-tiltRemdHalf*this.tickSpace/10;
-        //if (tiltRemd != 0) this.scaleVals.pop();
         this.scaleVals.forEach((val,idx)=>{
             this.bm.font = `${12}px monaco`;
             this.bm.textAlign = 'start';
             this.bm.fillText(val.toString(), space-5, this.y-this.tickHeight-2);
             this.bm.moveTo(space, this.y);
             this.bm.lineTo(space, this.y-this.tickHeight); 
-            //if (idx%2)this.bm.lineTo(space, this.y-this.tickHeight); 
-            //else this.bm.lineTo(space, this.y-this.tickHeight/2); 
-            //space += this.tickSpace;
             this.bm.moveTo(spaceHalf, this.y);
             this.bm.lineTo(spaceHalf, this.y-this.tickHeight/2); 
             space += this.tickSpace;
             spaceHalf += this.tickSpace;
-            //space = Math.floor(space) + 0.5;
         });
-        var middle = this.x + this.tickSpace*4;
+        var middle = this.x + this.tickSpace*(this._range/2);
         this.bm.moveTo(middle, this.y+15);
         this.bm.lineTo(middle, this.y+15 -this.tickHeight); 
         this.bm.fillText(tiltFloor.toString(), middle+4, this.y+15);
         this.bm.closePath();
         this.bm.stroke();
         super.resetGlobalLineWidth(); 
-        //this.bm.restore();
     }
   }
+export class pitchLader extends hudControl {
+    constructor(bm, width, height){
+        super(bm,0,0);
+        this.width = width;
+        this.height = height;
+        this.middle = width/2;
+        this.tilt = 0;
+        this.rot = 0;
+        this.tickHeight = 100;
+        this.tickSpace = 40;
+        this.scale = 10;
+        //this.x = Math.floor(this.x) + 0.5;
+        //this.y = Math.floor(this.y) + 0.5;
+        this._range = 4;
+        this.middleOffset = height -(height - this.tickSpace*this._range )/2;// +this.tickSpace;
+    }
+    set angle(angle){
+        this.tilt = angle;
+    }
+    set rotation(rotation){
+        this.rot = rotation;
+    }
+    set range(range){
+        this._range = range;
+    }
+    set rangeScale(rangeScale){
+        this.scale = rangeScale;
+    }
+    draw(){
+        this.bm.save();
+        this.bm.translate(this.width/2, this.height/2);
+        this.bm.rotate((Math.PI / 180) * this.rot); // rotate
+        this.bm.translate(-this.width/2, -this.height/2);
 
+        var tiltFloor = Math.floor(this.tilt);
+        var tiltRemd = Math.floor(this.tilt * 10/this.scale) % 10;
+        this.scaleVals = range(
+            Math.floor(this.tilt/this.scale)*this.scale - Math.floor(this.scale*this._range/2),
+            Math.floor(this.tilt/this.scale)*this.scale + Math.floor(this.scale*this._range/2),
+            this.scale);
+        this.tilt = tiltFloor + tiltRemd/10;
+        
+        var space = 0;
+        if (tiltRemd >=0) 
+            space = this.middleOffset +tiltRemd*this.tickSpace/10;
+        else 
+            space = this.middleOffset + (10*this.tickSpace/10 +tiltRemd*this.tickSpace/10);
+
+        super.changeLocalLineWidth();
+
+        this.scaleVals.forEach((val,idx)=>{
+            this.bm.beginPath();
+            this.bm.font = `${12}px monaco`;
+            this.bm.textAlign = 'start';
+            var sign = 1;
+            if (val<0) {
+                this.bm.setLineDash([3, 2]);
+                sign = -1;
+            }
+            if (val != 0){
+                this.bm.moveTo(this.middle - this.tickHeight/2, space);
+                this.bm.lineTo(this.middle - this.tickHeight*0.3, space); 
+                this.bm.moveTo(this.middle + this.tickHeight*0.3, space);
+                this.bm.lineTo(this.middle + this.tickHeight/2, space); 
+                this.bm.moveTo(this.middle - this.tickHeight/2, space);
+                this.bm.lineTo(this.middle - this.tickHeight/2, space+10*sign); 
+                this.bm.moveTo(this.middle + this.tickHeight/2, space);
+                this.bm.lineTo(this.middle + this.tickHeight/2, space+10*sign); 
+                this.bm.fillText(val.toString(), this.middle - this.tickHeight/2 -25, space+8*sign);
+            }else{
+                this.bm.moveTo(this.middle - this.tickHeight*0.8, space);
+                this.bm.lineTo(this.middle - this.tickHeight*0.3, space); 
+                this.bm.moveTo(this.middle + this.tickHeight*0.3, space);
+                this.bm.lineTo(this.middle + this.tickHeight*0.8, space); 
+            }
+            space -= this.tickSpace;
+            this.bm.closePath();
+            this.bm.stroke();
+            this.bm.setLineDash([]);
+        });
+        
+        super.resetGlobalLineWidth(); 
+        this.bm.restore();
+    }
+}
 
 
 

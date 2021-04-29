@@ -1,5 +1,6 @@
 import * as THREE from 'three'
 import * as HUD from './HudControls';
+import * as SIM from './hudDataSimulation';
 export default function hud(scene,canvas){
     
     const screenDimensions = {
@@ -26,15 +27,16 @@ export default function hud(scene,canvas){
     hudBitmap.strokeStyle = style;
     hudBitmap.globalAlpha = 0.75;
     var hudElements = {
-        info: new HUD.hudSimpleText(hudBitmap, 10, 20,16),
+        info: new HUD.hudSimpleText(hudBitmap, hudCanvas.width/2 -30, hudCanvas.height - 5,16),
         border: new HUD.hudBorder(hudBitmap,hudCanvas.width,hudCanvas.height),
         crosshair: new HUD.crosshair(hudBitmap,hudCanvas.width,hudCanvas.height),
-        horizon: new HUD.horizon(hudBitmap,hudCanvas.width,hudCanvas.height),
-        compass: new HUD.compass(hudBitmap,hudCanvas.width,hudCanvas.height)
+        //horizon: new HUD.horizon(hudBitmap,hudCanvas.width,hudCanvas.height),
+        compass: new HUD.compass(hudBitmap,hudCanvas.width,hudCanvas.height),
+        pitchLader: new HUD.pitchLader(hudBitmap,hudCanvas.width,hudCanvas.height)
     };
-    hudElements.border.lineWidth = 5;
+    //hudElements.border.lineWidth = 5;
     hudElements.crosshair.lineWidth = 2;
-    //hudElements.border.draw();
+    //hudElements.compass.rangeScale = 1;
     Object.values(hudElements).forEach(val => {val.draw()});
  
 
@@ -48,49 +50,36 @@ export default function hud(scene,canvas){
     plane.name = "hudPlane";
     plane.position.set(0,0,-0.15);
     scene.add( plane );
-    var vx = 5;
-    var vy = 2;
-    var angle = 0;
-    var yaw =0;
-    var magnet = 10;
-    const minc = 0.1;
-    var magnetInc = minc;
-    function leading_zeros(dt) 
-    { 
-        return (dt < 10 ? '0' : '') + dt;
-    }
-    
+
+
+    var movePoint = new SIM.bouncer(screenDimensions.width,screenDimensions.height);
+    var tiltHorizon = new SIM.sineEasing();
+    var rotCompass = new SIM.linearEasing360(1);
+    var pitch = new SIM.linearEasing360(1);
+
     function draw() {
         hudBitmap.clearRect(0,0,screenDimensions.width/2,screenDimensions.height);
         
-        var d = new Date();   
-        hudElements.info.text = `TIME:${leading_zeros(d.getHours())}:${leading_zeros(d.getMinutes())}:${leading_zeros(d.getSeconds())}`;
+        // display time
+        hudElements.info.text = SIM.getTimeString();
+
+        // simulate crosshair movement and display
+        movePoint.nextPoint();
+        hudElements.crosshair.x = movePoint.x;
+        hudElements.crosshair.y = movePoint.y;
+
+        // simulate horizon tilt
+        //hudElements.horizon.tilt = tiltHorizon.nextPoint();
+
+        // simulate compass rotation
+        hudElements.compass.angle = 350;//rotCompass.nextPoint();
+
+        // simulate pitch and roll
+        hudElements.pitchLader.rot = rotCompass.nextPoint();
+        hudElements.pitchLader.angle = 10;//pitch.nextPoint();
         
-        //hudTexture.needsUpdate = true;
-        //hudBitmap.clearRect(0,0, 300, 300);
-        hudElements.crosshair.x = hudElements.crosshair.x  +vx;
-        hudElements.crosshair.y = hudElements.crosshair.y  +vy;
-        if (hudElements.crosshair.y+ vy > screenDimensions.height || hudElements.crosshair.y + vy < 0) {
-            vy = -vy;
-          }
-        if (hudElements.crosshair.x + vx > screenDimensions.width/2 || hudElements.crosshair.x+ vx < 0) {
-            vx = -vx;
-        }
-
-        hudElements.info.draw();
-        hudElements.crosshair.draw();
-
-        if (magnet>25)magnetInc = -minc;
-        if (magnet< 5)magnetInc = minc;
-        magnet += magnetInc;
-        hudElements.compass.angle = magnet;
-        hudElements.compass.draw();
-
-        if (angle>2.9)yaw = -0.02;
-        if (angle<0.1)yaw = 0.02;
-        angle += yaw;
-        hudElements.horizon.tilt = Math.sin(Math.PI*angle/2)*90;
-        hudElements.horizon.draw();
+        // redraw
+        Object.values(hudElements).forEach(val => {val.draw()});
 
         hudTexture.needsUpdate = true;
       }
