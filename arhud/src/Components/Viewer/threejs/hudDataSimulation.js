@@ -9,6 +9,39 @@ export function getTimeString(){
     return `TIME:${leading_zeros(d.getHours())}:${leading_zeros(d.getMinutes())}:${leading_zeros(d.getSeconds())}`;
 } 
 
+class easing{
+    constructor(mx,mn,inc, val){
+    this.min = mn;
+    this.max = mx;
+    this.inc = inc;
+    this.value = val;
+    }
+    set inc(inc){
+        this._inc = inc;
+    }
+    set min(min){
+        this._min = min;
+    }
+    set max(max){
+        this._max = max;
+    }
+    set value(value){
+        this._value = value;
+    }
+    get value(){
+        return this._value;
+    }
+    get inc(){
+        return this._inc;
+    }
+    get min(){
+        return this._min;
+    }
+    get max(){
+        return this._max;
+    }
+}
+
 // bounce the point within the screen limit
 export class bouncer{
     constructor(width, height){
@@ -34,33 +67,63 @@ export class bouncer{
 }
 
 // simulate +/- movement with sine easing
-export class sineEasing{
+export class sineEasing extends easing{
     constructor(){
-        this.angle = 0;
-        this.yaw =0;
+        super(1,-1,0.02,0);
+        this.yaw = 0.02;
     }
     nextPoint(){
-        if (this.angle>2.9)this.yaw = -0.02;
-        if (this.angle<0.1)this.yaw = 0.02;
-        this.angle += this.yaw;
-        return Math.sin(Math.PI*this.angle/2)*90;
+        if (this.value>this._max)this.yaw = -this.inc;
+        if (this.value<this._min)this.yaw = this.inc;
+        this.value += this.yaw;
+        return Math.sin(Math.PI*this.value/2)*90;
     }
 }
 
-export class linearEasing360{
+export class linearEasing360 extends easing{
     constructor(inc=0.1){
-        this.magnet = 0;
-        this.minc = inc;
-        this.magnetInc = this.minc;
-    }
-    set inc(inc){
-        this.minc = inc;
+        super(10,-10,inc,0);
+        this.magnetInc = this._inc;
     }
     nextPoint(){
-        if (this.magnet > 10) this.magnetInc = -this.minc;
-        if (this.magnet <=  -10 ) this.magnetInc = this.minc;
-        this.magnet += this.magnetInc;
-        return this.magnet;
+        if (this.value > this._max) this.magnetInc = -this._inc;
+        if (this.value <=  this._min ) this.magnetInc = this._inc;
+        this.value += this.magnetInc;
+        return this.value;
+    }
+}
+
+export class airplaneTelemetry{
+    constructor(){
+        this.rollModel = new sineEasing();
+        this.rollModel.max = 0.4;
+        this.rollModel.min = -0.4;
+        this.yawModel = new linearEasing360(1);
+        this.yawModel.max = 30;
+        this.yawModel.min = 0;
+        this.pitchModel = new linearEasing360(0.7);
+        this.pitchModel.max = 25;
+        this.pitchModel.min = -25;
+        this._roll = this.rollModel.nextPoint();
+        this._pitch = this.pitchModel.nextPoint();
+        this._yaw = this.yawModel.nextPoint();
+    }
+    get roll(){
+        return this._roll;
+    }
+    get pitch(){
+        return this._pitch;
+    }
+    get yaw(){
+        return this._yaw;
+    }
+    next(){
+        if (this.roll >= 40 || this.roll <= -40){
+            this._pitch = this.pitchModel.nextPoint();
+            if (this.pitch >15 || this.pitch <-15 ) this._roll = this.rollModel.nextPoint();
+        }else this._roll = this.rollModel.nextPoint();
+        this._yaw = this.yawModel.nextPoint();
+        //console.log(this._yaw);
     }
 }
 

@@ -30,7 +30,7 @@ export default function hud(scene,canvas){
         info: new HUD.hudSimpleText(hudBitmap, hudCanvas.width/2 -30, hudCanvas.height - 5,16),
         border: new HUD.hudBorder(hudBitmap,hudCanvas.width,hudCanvas.height),
         crosshair: new HUD.crosshair(hudBitmap,hudCanvas.width,hudCanvas.height),
-        //horizon: new HUD.horizon(hudBitmap,hudCanvas.width,hudCanvas.height),
+        horizon: new HUD.horizon(hudBitmap,hudCanvas.width,hudCanvas.height),
         compass: new HUD.compass(hudBitmap,hudCanvas.width,hudCanvas.height),
         pitchLader: new HUD.pitchLader(hudBitmap,hudCanvas.width,hudCanvas.height)
     };
@@ -53,9 +53,12 @@ export default function hud(scene,canvas){
 
 
     var movePoint = new SIM.bouncer(screenDimensions.width,screenDimensions.height);
-    var tiltHorizon = new SIM.sineEasing();
+    /*var tiltHorizon = new SIM.sineEasing();
     var rotCompass = new SIM.linearEasing360(1);
-    var pitch = new SIM.linearEasing360(1);
+    rotCompass.max = 30;
+    rotCompass.min = 0;
+    var pitch = new SIM.linearEasing360(0.7);*/
+    var flightData = new SIM.airplaneTelemetry();
 
     function draw() {
         hudBitmap.clearRect(0,0,screenDimensions.width/2,screenDimensions.height);
@@ -69,15 +72,16 @@ export default function hud(scene,canvas){
         hudElements.crosshair.y = movePoint.y;
 
         // simulate horizon tilt
+        flightData.next();
         //hudElements.horizon.tilt = tiltHorizon.nextPoint();
 
         // simulate compass rotation
-        hudElements.compass.angle = 350;//rotCompass.nextPoint();
+        hudElements.compass.angle = flightData.yaw;
 
         // simulate pitch and roll
-        hudElements.pitchLader.rot = rotCompass.nextPoint();
-        hudElements.pitchLader.angle = 10;//pitch.nextPoint();
-        
+        hudElements.pitchLader.rot = flightData.roll;//rotCompass.nextPoint();
+        hudElements.pitchLader.angle = flightData.pitch;//pitch.nextPoint();
+        //console.log(pitch.nextPoint());
         // redraw
         Object.values(hudElements).forEach(val => {val.draw()});
 
