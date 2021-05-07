@@ -1,8 +1,8 @@
 {
   "files": {
     "main.css": "/arhud/static/css/main.c715c5b5.chunk.css",
-    "main.js": "/arhud/static/js/main.55113e76.chunk.js",
-    "main.js.map": "/arhud/static/js/main.55113e76.chunk.js.map",
+    "main.js": "/arhud/static/js/main.30b047bc.chunk.js",
+    "main.js.map": "/arhud/static/js/main.30b047bc.chunk.js.map",
     "runtime-main.js": "/arhud/static/js/runtime-main.ade43688.js",
     "runtime-main.js.map": "/arhud/static/js/runtime-main.ade43688.js.map",
     "static/js/2.6d69eb0f.chunk.js": "/arhud/static/js/2.6d69eb0f.chunk.js",
@@ -17,6 +17,6 @@
     "static/js/runtime-main.ade43688.js",
     "static/js/2.6d69eb0f.chunk.js",
     "static/css/main.c715c5b5.chunk.css",
-    "static/js/main.55113e76.chunk.js"
+    "static/js/main.30b047bc.chunk.js"
   ]
 }
