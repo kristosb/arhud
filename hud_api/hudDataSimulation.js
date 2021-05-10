@@ -127,4 +127,4 @@ export class airplaneTelemetry{
     }
 }
 
-export default {getTimeString, bouncer, sineEasing, linearEasing360}
+export default {getTimeString, bouncer, sineEasing, linearEasing360, airplaneTelemetry}

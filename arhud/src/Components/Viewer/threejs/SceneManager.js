@@ -2,7 +2,6 @@ import * as THREE from 'three';
 import SceneSubject from './SceneSubject';
 import GeneralLights from './GeneralLights';
 import { StereoEffect } from './StereoEffect.js';
-//import Hud from './Hud';
 import Hud from './Hud';
 export default function canvas(canvas)  {
     var preserveSize = true;
@@ -24,16 +23,15 @@ export default function canvas(canvas)  {
     const renderer = buildRender(screenDimensions);
     const camera = buildCamera(screenDimensions);
     const sceneSubjects = createSceneSubjects(scene);
-    var hud = new Hud(scene,canvas);
+    var hud = new Hud(scene,canvas,0.5);
     var effect = new StereoEffect( renderer );
     effect.setSize( screenDimensions.width, screenDimensions.height );
     effect.setEyeSeparation(0.064);
     effect.setOffset(0);
-    var offset = 0;
+
+    var viewer = renderer;
     
     scene.add(camera);
-    //console.log(screenDimensions);
-    
 
     if (preserveSize){
         // remember these initial values
@@ -96,13 +94,14 @@ export default function canvas(canvas)  {
         //console.log(canvas);
         
         hud.update(elapsedTime);
-        render();
+        render(viewer);
         
         
     }
-    function render() {
+    function render(viewer) {
         //updateCameraPositionRelativeToMouse()
-        effect.render( scene, camera );
+        viewer.render(scene, camera);
+        //effect.render( scene, camera );
         
     }
     function onKeyPress(ev) {
@@ -112,8 +111,8 @@ export default function canvas(canvas)  {
           (keycode >= 97 && keycode <= 122) ||
           (keycode >= 65 && keycode <= 90)
         ) {
-            if(keycode == 49) {offset= offset +0.1;effect.setOffset(offset);}
-            if(keycode == 50) {offset = offset -0.1;effect.setOffset(offset);}
+            //if(keycode == 49) {offset= offset +0.1;effect.setOffset(offset);}
+            //if(keycode == 50) {offset = offset -0.1;effect.setOffset(offset);}
             //if(keycode == 51) {camera.rotateY(Math.PI/360);}
             //if(keycode == 52) {camera.rotateY(-Math.PI/360);}
             //console.log( offset);
@@ -146,9 +145,9 @@ export default function canvas(canvas)  {
         //camera.lookAt( scene.position );
         renderer.setSize(width, height);   
     }
-    function getRenderer(){
+    /*function getRenderer(){
         return renderer;
-    }
+    }*/
 
     function animate(){
         renderer.setAnimationLoop( function () {
@@ -171,7 +170,7 @@ export default function canvas(canvas)  {
         update,
         onWindowResize,
         onMouseMove,
-        getRenderer,
+        //getRenderer,
         animate,
         getScene
     }

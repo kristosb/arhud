@@ -1,18 +1,21 @@
 import * as THREE from 'three'
-import * as HUD from './HudControls';
-import * as SIM from './hudDataSimulation';
-export default function hud(scene,canvas){
-    
+//import * as HUD from './HudControls';
+//import * as SIM from './hud_api';
+import * as HUD from 'hud_api';
+export default function hud(scene,canvas,planeSize = 0.5){
+
+    //var size = 600;
+    //if (window.innerHeight < size) 
+    //size = window.innerHeight;
     const screenDimensions = {
         width: canvas.width,
         height: canvas.height
     }
-    console.log(screenDimensions);
-    var count = 0;
+    //console.log(screenDimensions);
     var elapsed, now;
-    var then= 0;
+    var then = 0;
     var interval=0.05;
-    console.log('win'+window.innerHeight);
+    //console.log('win inner height'+window.innerHeight);
     var style = `rgba(
         ${0xa3},
         ${0xff},
@@ -22,7 +25,8 @@ export default function hud(scene,canvas){
     hudCanvas.width = screenDimensions.width/2; //keep it square assuming default 300x150
     hudCanvas.height = screenDimensions.height;
     var hudBitmap = hudCanvas.getContext('2d');
-    //flipHoriz(hudBitmap);    
+    hudBitmap.lineWidth = 2;
+    //flipHoriz(hudBitmap);   
     hudBitmap.fillStyle = style;
     hudBitmap.strokeStyle = style;
     hudBitmap.globalAlpha = 0.75;
@@ -32,11 +36,14 @@ export default function hud(scene,canvas){
         crosshair: new HUD.crosshair(hudBitmap,hudCanvas.width,hudCanvas.height),
         horizon: new HUD.horizon(hudBitmap,hudCanvas.width,hudCanvas.height),
         compass: new HUD.compass(hudBitmap,hudCanvas.width,hudCanvas.height),
-        pitchLader: new HUD.pitchLader(hudBitmap,hudCanvas.width,hudCanvas.height)
+        pitchLader: new HUD.pitchLader(hudBitmap,hudCanvas.width,hudCanvas.height),
+        //msgs: new HUD.hudWrappedText(hudBitmap,10,60,12)
     };
+    //hudElements.msgs.txt = 'Smash 11, you have traffic 12 o\'clock, less than five miles. 727 descending to one four thousand.\n Copy. Smash is radar contact tally-ho.';
     //hudElements.border.lineWidth = 5;
-    hudElements.crosshair.lineWidth = 2;
-    //hudElements.compass.rangeScale = 1;
+    /*hudElements.crosshair.lineWidth = 2;
+    hudElements.compass.lineWidth = 2;
+    hudElements.pitchLader.lineWidth = 2;*/
     Object.values(hudElements).forEach(val => {val.draw()});
  
 
@@ -45,43 +52,34 @@ export default function hud(scene,canvas){
     hudTexture.needsUpdate = true;
     var material = new THREE.MeshBasicMaterial({map: hudTexture} );//{color: 0xffff00, side: THREE.DoubleSide} );
     material.transparent = true;
-    var planeGeometry = new THREE.PlaneGeometry( 0.4, 0.4 );
+    var planeGeometry = new THREE.PlaneGeometry( planeSize, planeSize );
     var plane = new THREE.Mesh( planeGeometry, material );
     plane.name = "hudPlane";
     plane.position.set(0,0,-0.15);
     scene.add( plane );
 
 
-    var movePoint = new SIM.bouncer(screenDimensions.width,screenDimensions.height);
-    /*var tiltHorizon = new SIM.sineEasing();
-    var rotCompass = new SIM.linearEasing360(1);
-    rotCompass.max = 30;
-    rotCompass.min = 0;
-    var pitch = new SIM.linearEasing360(0.7);*/
-    var flightData = new SIM.airplaneTelemetry();
+    var movePoint = new HUD.bouncer(screenDimensions.width,screenDimensions.height);
+    var flightData = new HUD.airplaneTelemetry();
 
     function draw() {
         hudBitmap.clearRect(0,0,screenDimensions.width/2,screenDimensions.height);
         
         // display time
-        hudElements.info.text = SIM.getTimeString();
+        hudElements.info.text = HUD.getTimeString();
 
         // simulate crosshair movement and display
         movePoint.nextPoint();
         hudElements.crosshair.x = movePoint.x;
         hudElements.crosshair.y = movePoint.y;
 
-        // simulate horizon tilt
+        // simulate incomming data
         flightData.next();
-        //hudElements.horizon.tilt = tiltHorizon.nextPoint();
 
         // simulate compass rotation
         hudElements.compass.angle = flightData.yaw;
-
-        // simulate pitch and roll
-        hudElements.pitchLader.rot = flightData.roll;//rotCompass.nextPoint();
-        hudElements.pitchLader.angle = flightData.pitch;//pitch.nextPoint();
-        //console.log(pitch.nextPoint());
+        hudElements.pitchLader.rot = flightData.roll;
+        hudElements.pitchLader.angle = flightData.pitch;
         // redraw
         Object.values(hudElements).forEach(val => {val.draw()});
 

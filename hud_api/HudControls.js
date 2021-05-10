@@ -44,12 +44,50 @@ export class hudSimpleText extends hudControl{
         this.txt = txt;
     }
     draw(){
-        this.bm.font = `${this.fontSize}px monaco`;
+        this.bm.font = `bold ${this.fontSize}px Arial`;
         this.bm.textAlign = 'start';
         this.bm.fillText(this.txt, this.x, this.y);
     }
   }
 
+  function wrapText(context, text, x, y, maxWidth, lineHeight) {
+    var words = text.split(' ');
+    var line = '';
+
+    for(var n = 0; n < words.length; n++) {
+      var testLine = line + words[n] + ' ';
+      var metrics = context.measureText(testLine);
+      var testWidth = metrics.width;
+      if (testWidth > maxWidth && n > 0) {
+        context.fillText(line, x, y);
+        line = words[n] + ' ';
+        y += lineHeight;
+      }
+      else {
+        line = testLine;
+      }
+    }
+    context.fillText(line, x, y);
+  }
+
+  export class hudWrappedText extends hudControl{
+    constructor(bm, x, y, fontSize) {
+        super(bm,x,y);
+        this.txt = "hello..."
+        this.fontSize = fontSize;
+    }
+    set text(txt){
+        this.txt = txt;
+    }
+    draw(){
+        this.bm.font = `bold ${this.fontSize}px Arial`;
+        wrapText(this.bm, this.txt, this.x, this.y, 100, this.fontSize+2);
+    }
+  }
+
+
+
+  
 export class hudBorder extends hudControl{
     constructor(bm, width, height) {
         super(bm,0,0);
@@ -140,19 +178,23 @@ export class crosshair extends hudControl{
     return rangeArray.map(x=>limit(x));
   }
   export class compass extends hudControl{
-    constructor(bm, width, height) {
-        super(bm,width / 4,height / 7);
+    constructor(bm, width, height, tickSpace =40, range = 4) {   
+        super(bm,width/2- 40*(4/2),height / 7);
+        this.tickSpace = tickSpace;
+        this._range = range;
+        //this.middle =  this.tickSpace*(this._range/2);
+        this.middle = width/2;
         this.width = width;
         this.height = height;
         this.tilt = 0;
         this.tickHeight = 15;
-        this.tickSpace = 40;
+        
         this.scale = 10;
         //this.scaleVals = range(10/this.scale,50/this.scale,this.scale);
         //console.log(this.scaleVals);
         this.x = Math.floor(this.x) + 0.5;
         this.y = Math.floor(this.y) + 0.5;
-        this._range = 4;
+        
         
     }
     set angle(angle){
@@ -181,7 +223,7 @@ export class crosshair extends hudControl{
         var space = this.x-tiltRemd*this.tickSpace/10;
         var spaceHalf = this.x-tiltRemdHalf*this.tickSpace/10;
         this.scaleVals.forEach((val,idx)=>{
-            this.bm.font = `${12}px monaco`;
+            this.bm.font = `bold ${12}px Arial`;
             this.bm.textAlign = 'start';
             this.bm.fillText(val.toString(), space-5, this.y-this.tickHeight-2);
             this.bm.moveTo(space, this.y);
@@ -191,10 +233,10 @@ export class crosshair extends hudControl{
             space += this.tickSpace;
             spaceHalf += this.tickSpace;
         });
-        var middle = this.x + this.tickSpace*(this._range/2);
-        this.bm.moveTo(middle, this.y+15);
-        this.bm.lineTo(middle, this.y+15 -this.tickHeight); 
-        this.bm.fillText(tiltFloor.toString(), middle+4, this.y+15);
+        //var middle =  this.tickSpace*(this._range/2);
+        this.bm.moveTo(this.middle, this.y+15);
+        this.bm.lineTo(this.middle, this.y+15 -this.tickHeight); 
+        this.bm.fillText(tiltFloor.toString(), this.middle+4, this.y+15);
         this.bm.closePath();
         this.bm.stroke();
         super.resetGlobalLineWidth(); 
@@ -252,7 +294,7 @@ export class pitchLader extends hudControl {
 
         this.scaleVals.forEach((val,idx)=>{
             this.bm.beginPath();
-            this.bm.font = `${12}px monaco`;
+            this.bm.font = `bold ${12}px Arial`;
             this.bm.textAlign = 'start';
             var sign = 1;
             if (val<0) {
@@ -288,4 +330,4 @@ export class pitchLader extends hudControl {
 
 
 
-export default {hudSimpleText, hudBorder, crosshair, horizon, compass}
+export default { hudSimpleText, hudWrappedText, hudBorder, crosshair, horizon, compass, pitchLader }
