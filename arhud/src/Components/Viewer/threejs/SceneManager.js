@@ -1,7 +1,8 @@
 import * as THREE from 'three';
 import SceneSubject from './SceneSubject';
 import GeneralLights from './GeneralLights';
-import { StereoEffect } from './StereoEffect.js';
+//import { StereoEffect } from './StereoEffect.js';
+import { StereoButton } from './StereoButton.js';
 import Hud from './Hud';
 export default function canvas(canvas)  {
     var preserveSize = true;
@@ -24,15 +25,10 @@ export default function canvas(canvas)  {
     const camera = buildCamera(screenDimensions);
     const sceneSubjects = createSceneSubjects(scene);
     var hud = new Hud(scene,canvas,0.5);
-    var effect = new StereoEffect( renderer );
-    effect.setSize( screenDimensions.width, screenDimensions.height );
-    effect.setEyeSeparation(0.064);
-    effect.setOffset(0);
-
-    var viewer = renderer;
-    
     scene.add(camera);
-
+    var viewer = StereoButton.createViewer(renderer);
+    viewer.fullSize = false;
+    document.body.appendChild( StereoButton.createButton( renderer, viewer ) );
     if (preserveSize){
         // remember these initial values
         var tanFOV = Math.tan( ( ( Math.PI / 180 ) * camera.fov / 2 ) );
@@ -90,20 +86,11 @@ export default function canvas(canvas)  {
         
         for(let i=0; i<sceneSubjects.length; i++)
             sceneSubjects[i].update(elapsedTime);
-        //renderer.render(scene, camera);
-        //console.log(canvas);
         
         hud.update(elapsedTime);
-        render(viewer);
-        
-        
-    }
-    function render(viewer) {
-        //updateCameraPositionRelativeToMouse()
         viewer.render(scene, camera);
-        //effect.render( scene, camera );
-        
     }
+
     function onKeyPress(ev) {
         let keycode = ev.which;
         if (
@@ -137,24 +124,17 @@ export default function canvas(canvas)  {
         if (preserveSize){
             // adjust the FOV
             camera.fov = ( 360 / Math.PI ) * Math.atan( tanFOV * ( height / windowHeight ) );
-            effect.setOffset(getOffset());
+            //viewer.setOffset(getOffset());
         }
 
         camera.updateProjectionMatrix();
-        effect.setSize( width, height);
-        //camera.lookAt( scene.position );
-        renderer.setSize(width, height);   
+        //camera.lookAt( scene.position );  
+        viewer.setSize(width, height);   
     }
-    /*function getRenderer(){
-        return renderer;
-    }*/
 
     function animate(){
         renderer.setAnimationLoop( function () {
-            
-            //renderer.render( scene, camera );
-            update();
-            
+            update();         
         } );
 
     }
@@ -163,15 +143,10 @@ export default function canvas(canvas)  {
         mousePosition.x = x;
         mousePosition.y = y;
     }
-    function getScene(){
-        return scene;
-    }
     return {
         update,
         onWindowResize,
         onMouseMove,
-        //getRenderer,
-        animate,
-        getScene
+        animate
     }
 }

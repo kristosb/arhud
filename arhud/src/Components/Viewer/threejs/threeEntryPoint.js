@@ -12,8 +12,6 @@ export default container => {
     bindEventListeners();
     sceneManager.animate();
     
-    //var renderer = sceneManager.getRenderer();
-    //render();
     
     function createCanvas(document, container) {
         const canvas = document.createElement("canvas");    

@@ -102,12 +102,12 @@ export default function hud(scene,canvas,planeSize = 0.5){
             then = now;
         }
     }
-    function getCanvas(){
+    /*function getCanvas(){
          return hudCanvas;
-    }
+    }*/
     return {
         update,
-        getCanvas,
+        //getCanvas,
         draw
     }
 }
