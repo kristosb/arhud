@@ -26,9 +26,11 @@ export default function canvas(canvas)  {
     const sceneSubjects = createSceneSubjects(scene);
     var hud = new Hud(scene,canvas,0.5);
     scene.add(camera);
-    var viewer = StereoButton.createViewer(renderer);
+    var viewer = new StereoButton(renderer);
     viewer.fullSize = false;
-    document.body.appendChild( StereoButton.createButton( renderer, viewer ) );
+    //viewer.enableStereo();
+    document.body.appendChild( viewer.createButton());
+
     if (preserveSize){
         // remember these initial values
         var tanFOV = Math.tan( ( ( Math.PI / 180 ) * camera.fov / 2 ) );
@@ -43,7 +45,6 @@ export default function canvas(canvas)  {
     function buildScene() {
         const scene = new THREE.Scene();
         scene.background = new THREE.Color('black');
-
         return scene;
     }
 

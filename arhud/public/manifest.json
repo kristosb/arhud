@@ -1,6 +1,6 @@
 {
-  "short_name": "React App",
-  "name": "Create React App Sample",
+  "short_name": "AR HUD",
+  "name": "Demo of AR HUD ",
   "icons": [
     {
       "src": "favicon.ico",
