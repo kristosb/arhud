@@ -1,8 +1,7 @@
 import * as THREE from 'three';
 import SceneSubject from './SceneSubject';
 import GeneralLights from './GeneralLights';
-//import { StereoEffect } from './StereoEffect.js';
-import { StereoButton } from './StereoButton.js';
+import { StereoButton } from 'stereogram';
 import Hud from './Hud';
 export default function canvas(canvas)  {
     var preserveSize = true;

@@ -1,0 +1,25 @@
+{
+  "name": "stereogram",
+  "version": "1.0.5",
+  "description": "set of function to design and simulate HUD on vr headset",
+  "main": "stereogram.js",
+  "dependencies": {
+    "three": "^0.127.0"
+  },
+  "files": [
+    "stereogram.js",
+    "hudDataSimulation.js",
+    "StereoButton.js",
+    "StereoCamera.js",
+    "StereoEffect.js",
+    "package.json"
+  ],
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [
+    "hud"
+  ],
+  "author": "kri100s",
+  "license": "ISC"
+}

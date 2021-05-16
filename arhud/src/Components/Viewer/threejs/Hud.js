@@ -1,7 +1,7 @@
 import * as THREE from 'three'
-//import * as HUD from './HudControls';
+//import * as SGRAM from './HudControls';
 //import * as SIM from './hud_api';
-import * as HUD from 'hud_api';
+import * as SGRAM from 'stereogram';
 export default function hud(scene,canvas,planeSize = 0.5){
 
     //var size = 600;
@@ -31,13 +31,13 @@ export default function hud(scene,canvas,planeSize = 0.5){
     hudBitmap.strokeStyle = style;
     hudBitmap.globalAlpha = 0.75;
     var hudElements = {
-        info: new HUD.hudSimpleText(hudBitmap, hudCanvas.width/2 -30, hudCanvas.height - 5,16),
-        border: new HUD.hudBorder(hudBitmap,hudCanvas.width,hudCanvas.height),
-        crosshair: new HUD.crosshair(hudBitmap,hudCanvas.width,hudCanvas.height),
-        horizon: new HUD.horizon(hudBitmap,hudCanvas.width,hudCanvas.height),
-        compass: new HUD.compass(hudBitmap,hudCanvas.width,hudCanvas.height),
-        pitchLader: new HUD.pitchLader(hudBitmap,hudCanvas.width,hudCanvas.height),
-        //msgs: new HUD.hudWrappedText(hudBitmap,10,60,12)
+        info: new SGRAM.hudSimpleText(hudBitmap, hudCanvas.width/2 -30, hudCanvas.height - 5,16),
+        border: new SGRAM.hudBorder(hudBitmap,hudCanvas.width,hudCanvas.height),
+        crosshair: new SGRAM.crosshair(hudBitmap,hudCanvas.width,hudCanvas.height),
+        horizon: new SGRAM.horizon(hudBitmap,hudCanvas.width,hudCanvas.height),
+        compass: new SGRAM.compass(hudBitmap,hudCanvas.width,hudCanvas.height),
+        pitchLader: new SGRAM.pitchLader(hudBitmap,hudCanvas.width,hudCanvas.height),
+        //msgs: new SGRAM.hudWrappedText(hudBitmap,10,60,12)
     };
     //hudElements.msgs.txt = 'Smash 11, you have traffic 12 o\'clock, less than five miles. 727 descending to one four thousand.\n Copy. Smash is radar contact tally-ho.';
     //hudElements.border.lineWidth = 5;
@@ -59,14 +59,14 @@ export default function hud(scene,canvas,planeSize = 0.5){
     scene.add( plane );
 
 
-    var movePoint = new HUD.bouncer(screenDimensions.width,screenDimensions.height);
-    var flightData = new HUD.airplaneTelemetry();
+    var movePoint = new SGRAM.bouncer(screenDimensions.width,screenDimensions.height);
+    var flightData = new SGRAM.airplaneTelemetry();
 
     function draw() {
         hudBitmap.clearRect(0,0,screenDimensions.width/2,screenDimensions.height);
         
         // display time
-        hudElements.info.text = HUD.getTimeString();
+        hudElements.info.text = SGRAM.getTimeString();
 
         // simulate crosshair movement and display
         movePoint.nextPoint();
@@ -102,12 +102,8 @@ export default function hud(scene,canvas,planeSize = 0.5){
             then = now;
         }
     }
-    /*function getCanvas(){
-         return hudCanvas;
-    }*/
     return {
         update,
-        //getCanvas,
         draw
     }
 }
