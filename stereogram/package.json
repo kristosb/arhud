@@ -1,25 +1,35 @@
 {
   "name": "stereogram",
-  "version": "1.0.5",
+  "version": "1.0.6",
   "description": "set of function to design and simulate HUD on vr headset",
-  "main": "stereogram.js",
+  "main": "src/stereogram.js",
+  "devDependencies": {
+    "@babel/core": "^7.12.3",
+    "@babel/preset-env": "^7.12.1",
+    "babel-loader": "^8.1.0",
+    "webpack": "^5.3.2",
+    "webpack-cli": "^4.1.0",
+    "webpack-dev-server": "^3.11.0"
+  },
   "dependencies": {
+    "serve": "^11.3.2",
     "three": "^0.127.0"
   },
   "files": [
-    "stereogram.js",
-    "hudDataSimulation.js",
-    "StereoButton.js",
-    "StereoCamera.js",
-    "StereoEffect.js",
+    "src/stereogram.js",
+    "src/hudDataSimulation.js",
+    "src/StereoButton.js",
+    "src/StereoCamera.js",
+    "src/StereoEffect.js",
     "package.json"
   ],
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "build": "webpack --config ./webpack.config.js"
   },
   "keywords": [
     "hud"
   ],
   "author": "kri100s",
-  "license": "ISC"
+  "license": "MIT"
 }

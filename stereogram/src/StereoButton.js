@@ -124,5 +124,4 @@ class StereoButton {
 
 }
 
-
 export { StereoButton };

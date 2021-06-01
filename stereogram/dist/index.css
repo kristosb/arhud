@@ -1,0 +1,80 @@
+
+/* desktop-x-small */
+@media all and (min-width: 0) and (max-width: 480px) { 
+    .viewer-viewer {
+        height: 100vh;/*65vh;*/
+        width: 100%;
+        
+  margin: 0px;            /* top, left, bottom, right or TRBL */
+  /*min-height: 100vh;
+
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;*/
+  padding: 0;
+  overflow: hidden;
+
+    }
+}
+
+/* desktop-small */
+@media all and (min-width: 481px) and (max-width: 840px) {
+    .viewer-viewer {
+        height: 100vh;/*65vh;*/
+        width: 100%;
+
+  margin: 0px;            /* top, left, bottom, right or TRBL */
+  min-height: 100vh;
+  height: 100vh;/*65vh;*/
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 0;
+  overflow: hidden;
+
+    }
+}
+
+/* desktop-medium */
+@media all and (min-width: 841px) and (max-width: 1280px) {
+    .viewer-viewer {
+        height: 100vh;/*75vh;*/
+        width: 100%;
+
+          margin: 0px;            /* top, left, bottom, right or TRBL */
+          min-height: 100vh;
+          height: 100vh;/*65vh;*/
+          width: 100%;
+          display: flex;
+          flex-direction: column;
+          align-items: center;
+          justify-content: center;
+          padding: 0;
+          overflow: hidden;
+        
+    }
+}
+
+/* desktop-large */
+@media all and (min-width: 1281px) and (max-width: 1600px) { 
+    .viewer-viewer {
+        height: 100vh;/*70vh;*/
+        width: 100%;
+
+  margin: 0px;            /* top, left, bottom, right or TRBL */
+  min-height: 100vh;
+  height: 100vh;/*65vh;*/
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 0;
+  overflow: hidden;
+
+    }
+}
+

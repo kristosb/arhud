@@ -1,13 +1,13 @@
-import * as THREE from 'three'
-import * as SGRAM from 'stereogram';
-export default function hud(scene,canvas,planeSize = 0.5){
+//import * as THREE from 'three'
+//import * as stereogram from 'stereogram';
+function hud(scene,canvas,planeSize = 0.5){
 
     //var size = 600;
     //if (window.innerHeight < size) 
     //size = window.innerHeight;
     const screenDimensions = {
-        width: canvas.width,
-        height: canvas.height
+        width: 600,//canvas.width,
+        height: 300,//canvas.height
     }
     //console.log(screenDimensions);
     var elapsed, now;
@@ -29,13 +29,13 @@ export default function hud(scene,canvas,planeSize = 0.5){
     hudBitmap.strokeStyle = style;
     hudBitmap.globalAlpha = 0.75;
     var hudElements = {
-        info: new SGRAM.hudSimpleText(hudBitmap, hudCanvas.width/2 -30, hudCanvas.height - 5,16),
-        border: new SGRAM.hudBorder(hudBitmap,hudCanvas.width,hudCanvas.height),
-        crosshair: new SGRAM.crosshair(hudBitmap,hudCanvas.width,hudCanvas.height),
-        horizon: new SGRAM.horizon(hudBitmap,hudCanvas.width,hudCanvas.height),
-        compass: new SGRAM.compass(hudBitmap,hudCanvas.width,hudCanvas.height),
-        pitchLader: new SGRAM.pitchLader(hudBitmap,hudCanvas.width,hudCanvas.height),
-        //msgs: new SGRAM.hudWrappedText(hudBitmap,10,60,12)
+        info: new stereogram.hudSimpleText(hudBitmap, hudCanvas.width/2 -30, hudCanvas.height - 5,16),
+        border: new stereogram.hudBorder(hudBitmap,hudCanvas.width,hudCanvas.height),
+        crosshair: new stereogram.crosshair(hudBitmap,hudCanvas.width,hudCanvas.height),
+        horizon: new stereogram.horizon(hudBitmap,hudCanvas.width,hudCanvas.height),
+        compass: new stereogram.compass(hudBitmap,hudCanvas.width,hudCanvas.height),
+        pitchLader: new stereogram.pitchLader(hudBitmap,hudCanvas.width,hudCanvas.height),
+        //msgs: new stereogram.hudWrappedText(hudBitmap,10,60,12)
     };
     //hudElements.msgs.txt = 'Smash 11, you have traffic 12 o\'clock, less than five miles. 727 descending to one four thousand.\n Copy. Smash is radar contact tally-ho.';
     //hudElements.border.lineWidth = 5;
@@ -57,14 +57,14 @@ export default function hud(scene,canvas,planeSize = 0.5){
     scene.add( plane );
 
 
-    var movePoint = new SGRAM.bouncer(screenDimensions.width,screenDimensions.height);
-    var flightData = new SGRAM.airplaneTelemetry();
+    var movePoint = new stereogram.bouncer(screenDimensions.width,screenDimensions.height);
+    var flightData = new stereogram.airplaneTelemetry();
 
     function draw() {
         hudBitmap.clearRect(0,0,screenDimensions.width/2,screenDimensions.height);
         
         // display time
-        hudElements.info.text = SGRAM.getTimeString();
+        hudElements.info.text = stereogram.getTimeString();
 
         // simulate crosshair movement and display
         movePoint.nextPoint();
