@@ -1,6 +1,30 @@
 import * as THREE from 'three';
 import * as SGRAM from 'stereogram';
 import IMU from './Imu.js';
+function isMobileCheck() {
+    return /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
+}
+class orientationData {
+    //sinulate on desktop or real IMU on mobile
+    constructor(forceMobile =false){
+        this.isMobile = isMobileCheck() || forceMobile;
+        this.flightData = null
+        if(this.isMobile) this.flightData = new IMU.imu();
+        else this.flightData = new SGRAM.airplaneTelemetry();
+    }
+    get yaw(){
+        return this.flightData.yaw;
+    }
+    get pitch(){
+        return this.flightData.pitch;
+    }
+    get roll(){
+        return this.flightData.roll;
+    }
+    next(){
+        if(!this.isMobile) this.flightData.next();
+    }
+}
 export default function hud(scene,canvas,planeSize = 0.5){
 
     //var size = 600;
@@ -59,8 +83,7 @@ export default function hud(scene,canvas,planeSize = 0.5){
 
 
     var movePoint = new SGRAM.bouncer(screenDimensions.width,screenDimensions.height);
-    var flightData = new SGRAM.airplaneTelemetry();
-    var imuData = new IMU.imu();
+    var flightData = new orientationData(false);
 
     function draw() {
         hudBitmap.clearRect(0,0,screenDimensions.width/2,screenDimensions.height);
@@ -77,9 +100,9 @@ export default function hud(scene,canvas,planeSize = 0.5){
         flightData.next();
 
         // simulate compass rotation
-        hudElements.compass.angle = imuData.compass;//flightData.yaw;
-        hudElements.pitchLader.rot = -imuData.roll;//flightData.roll;
-        hudElements.pitchLader.angle = imuData.pitch;//flightData.pitch;
+        hudElements.compass.angle = flightData.yaw;
+        hudElements.pitchLader.rot = flightData.roll;
+        hudElements.pitchLader.angle = flightData.pitch;
         // redraw
         Object.values(hudElements).forEach(val => {val.draw()});
 

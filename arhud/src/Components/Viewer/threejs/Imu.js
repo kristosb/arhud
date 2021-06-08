@@ -62,28 +62,6 @@ function getWorldTransformationMatrix() {
 
 	return r_w;
 }
-const multiplyMatrices = (a, b) => {
-    if (!Array.isArray(a) || !Array.isArray(b) || !a.length || !b.length) {
-       throw new Error('arguments should be in 2-dimensional array format');
-    }
-    let x = a.length,
-    z = a[0].length,
-    y = b[0].length;
-
-    let productRow = Array.apply(null, new Array(y)).map(Number.prototype.valueOf, 0);
-    let product = new Array(x);
-    for (let p = 0; p < x; p++) {
-       product[p] = productRow.slice();
-    }
-    for (let i = 0; i < x; i++) {
-       for (let j = 0; j < y; j++) {
-          for (let k = 0; k < z; k++) {
-             product[i][j] += a[i][k] * b[k][j];
-          }
-       }
-    }
-    return product;
- }
 
 function matrixMultiply( a, b ) {
 	var final = 
@@ -98,18 +76,6 @@ function matrixMultiply( a, b ) {
 	 a[2][0] * b[0][1] + a[2][1] * b[1][1] + a[2][2] * b[2][1],
 	 a[2][0] * b[0][2] + a[2][1] * b[1][2] + a[2][2] * b[2][2]]
     ];
-
-	/*final[0] = a[0] * b[0] + a[1] * b[3] + a[2] * b[6];
-	final[1] = a[0] * b[1] + a[1] * b[4] + a[2] * b[7];
-	final[2] = a[0] * b[2] + a[1] * b[5] + a[2] * b[8];
-
-	final[3] = a[3] * b[0] + a[4] * b[3] + a[5] * b[6];
-	final[4] = a[3] * b[1] + a[4] * b[4] + a[5] * b[7];
-	final[5] = a[3] * b[2] + a[4] * b[5] + a[5] * b[8];
-
-	final[6] = a[6] * b[0] + a[7] * b[3] + a[8] * b[6];
-	final[7] = a[6] * b[1] + a[7] * b[4] + a[8] * b[7];
-	final[8] = a[6] * b[2] + a[7] * b[5] + a[8] * b[8];*/
 
 	return final;
 }
@@ -147,7 +113,7 @@ function eulerAngles(heading,attitude,bank){
     ];
 
     var matrix2 = matrixMultiply( matrix1, screenTransform ); // R_w
-    var matrix = multiplyMatrices( matrix2, worldTransform ); // R_w
+    var matrix = matrixMultiply( matrix2, worldTransform ); // R_w
     //console.log(matrix1);
     //console.log(matrix);
     //Singularity fix
@@ -246,8 +212,8 @@ class imu {
             objOrientation = eulerAngles(event.alpha,event.beta,event.gamma);
             //var eu = eulerFromRotation(event.alpha,event.beta,event.gamma);
             //that._compass = compassHeading(event.alpha,event.beta,event.gamma);
-            that._compass =  objOrientation.HEADING; //360- event.alpha;//
-            that._roll = objOrientation.BANK;  
+            that._yaw =  objOrientation.HEADING; //360- event.alpha;//
+            that._roll = -objOrientation.BANK;  
             that._pitch = objOrientation.ATTITUDE;
             that._updated  = true;
           }
