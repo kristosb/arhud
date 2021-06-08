@@ -22,6 +22,7 @@ class StereoButton {
         this.renderer = renderer;
         this.type = "single";
         this.fullSize = false;
+        this.landscapeLock = true;
         this.viewer = renderer;
 
         this.effect = new StereoEffect( this.renderer );
@@ -63,7 +64,12 @@ class StereoButton {
         this.button.onclick = function () {
             if ( that.currentSession === false ) {
                 //onSessionStarted(button);
-                if(document.fullscreenElement === null && that.fullSize) document.documentElement.requestFullscreen();
+                if(document.fullscreenElement === null && that.fullSize) {
+                    document.documentElement.requestFullscreen();
+                    // orientation lock works only in full screen mode
+                    if(that.landscapeLock) screen.orientation.lock("landscape");
+                }
+                
                 //session.addEventListener( 'click', onSessionEnded );
                 //await renderer.xr.setSession( session );
                 that.button.textContent = 'EXIT VR';
@@ -71,9 +77,14 @@ class StereoButton {
                 that.currentSession = true;
                 that.viewer = that.effect;
                 that.type = "vr";
+                
 
             } else {
-                if(document.fullscreenElement !== null) document.exitFullscreen();
+                if(document.fullscreenElement !== null) {
+                    // orientation lock works only in full screen mode
+                    if(that.landscapeLock)  screen.orientation.unlock();
+                    document.exitFullscreen();                   
+                }
                 //currentSession.removeEventListener( 'click', onSessionEnded );
                 that.button.style.opacity = '0.5';
                 that.button.textContent = 'ENTER VR';

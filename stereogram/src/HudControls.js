@@ -169,10 +169,18 @@ export class crosshair extends hudControl{
     //console.log(start,end);
     return Array(end/inc - (start/inc) + 1).fill().map((_, idx) => start+ idx*inc);
   }
-  function limit(x){
+  function limitCompass(x){
     if(x<0) x = x+ 360;
     if(x>359) x = x -360;
     return x;
+  }
+  function limitPitchLadder(x){
+    if(x<-90) x = -180-x;
+    if(x>90) x = 180-x ;
+    return x;
+  }
+  function rangeClip(rangeArray,limit){
+    return rangeArray.map(x=>limit(x));
   }
   function rangeClip360(rangeArray){
     return rangeArray.map(x=>limit(x));
@@ -214,7 +222,7 @@ export class crosshair extends hudControl{
             Math.floor(this.tilt/this.scale)*this.scale-Math.floor(this.scale*this._range/2),
             Math.floor(this.tilt/this.scale)*this.scale+ Math.floor(this.scale*this._range/2),
             this.scale);
-        this.scaleVals = rangeClip360(this.scaleVals);
+        this.scaleVals = rangeClip(this.scaleVals,limitCompass);
         this.tilt = tiltFloor + tiltRemd/10;
 
         super.changeLocalLineWidth();
@@ -282,6 +290,7 @@ export class pitchLader extends hudControl {
             Math.floor(this.tilt/this.scale)*this.scale - Math.floor(this.scale*this._range/2),
             Math.floor(this.tilt/this.scale)*this.scale + Math.floor(this.scale*this._range/2),
             this.scale);
+        this.scaleVals = rangeClip(this.scaleVals, limitPitchLadder);
         this.tilt = tiltFloor + tiltRemd/10;
         
         var space = 0;

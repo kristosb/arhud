@@ -1,5 +1,6 @@
-import * as THREE from 'three'
+import * as THREE from 'three';
 import * as SGRAM from 'stereogram';
+import IMU from './Imu.js';
 export default function hud(scene,canvas,planeSize = 0.5){
 
     //var size = 600;
@@ -59,6 +60,7 @@ export default function hud(scene,canvas,planeSize = 0.5){
 
     var movePoint = new SGRAM.bouncer(screenDimensions.width,screenDimensions.height);
     var flightData = new SGRAM.airplaneTelemetry();
+    var imuData = new IMU.imu();
 
     function draw() {
         hudBitmap.clearRect(0,0,screenDimensions.width/2,screenDimensions.height);
@@ -75,13 +77,14 @@ export default function hud(scene,canvas,planeSize = 0.5){
         flightData.next();
 
         // simulate compass rotation
-        hudElements.compass.angle = flightData.yaw;
-        hudElements.pitchLader.rot = flightData.roll;
-        hudElements.pitchLader.angle = flightData.pitch;
+        hudElements.compass.angle = imuData.compass;//flightData.yaw;
+        hudElements.pitchLader.rot = -imuData.roll;//flightData.roll;
+        hudElements.pitchLader.angle = imuData.pitch;//flightData.pitch;
         // redraw
         Object.values(hudElements).forEach(val => {val.draw()});
 
         hudTexture.needsUpdate = true;
+        //if (imuData.updated) console.log(`compass = ${imuData.compass}, yaw = ${imuData.yaw},pitch = ${imuData.pitch},roll = ${imuData.roll}`);
       }
 
 
